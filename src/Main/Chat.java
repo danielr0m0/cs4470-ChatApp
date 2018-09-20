@@ -1,25 +1,24 @@
 package Main;
 
 import java.io.*;
+
+import java.net.InetAddress;
 import java.net.Socket;
-import java.util.ArrayList;
 
 public class Chat {
 
-    static boolean connect;
 
     public static void main(String[] args) throws IOException {
-        int portNumber = 9090;
+        int portNumber = 5050;
 
-        Socket sock = new Socket("127.0.0.1", 3000);
-
+        Socket sock = new Socket(InetAddress.getLocalHost().getHostAddress(), portNumber);
+        System.out.println(InetAddress.getLocalHost().getHostAddress());
         // reading from keyboard (keyRead object)
         BufferedReader keyRead = new BufferedReader(new InputStreamReader(System.in));
         // sending to client (pwrite object)
         OutputStream ostream = sock.getOutputStream();
         PrintWriter pwrite = new PrintWriter(ostream, true);
 
-        System.out.println(sock.getRemoteSocketAddress());
 
         // receiving from server ( receiveRead  object)
         InputStream istream = sock.getInputStream();

@@ -1,6 +1,7 @@
 package Main;
 
 import java.io.*;
+
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -8,9 +9,11 @@ public class ChatServer {
 
     public static void main(String args[]) throws Exception
     {
-        ServerSocket sersock = new ServerSocket(3000);
-        System.out.println("Server  ready for chatting");
-        Socket sock = sersock.accept( );
+        int portNumber = Integer.parseInt(args[0]);
+        System.out.println(portNumber);
+        ServerSocket sersock = new ServerSocket(portNumber);
+        System.out.println("Server ready for chatting");
+        Socket sock = sersock.accept();
         // reading from keyboard (keyRead object)
         BufferedReader keyRead = new BufferedReader(new InputStreamReader(System.in));
         // sending to client (pwrite object)
@@ -24,6 +27,8 @@ public class ChatServer {
         String receiveMessage, sendMessage;
         while(true)
         {
+
+
             if((receiveMessage = receiveRead.readLine()) != null)
             {
                 System.out.println(receiveMessage);
