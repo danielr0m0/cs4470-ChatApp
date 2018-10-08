@@ -6,12 +6,12 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 public class User {
-    private int id=0;
+    private int id=1;
     private Socket socket;
     private int port;
 
     public User(Socket socket, int port) {
-        this.id=++id;
+        this.id=id++;
         this.socket = socket;
         this.port = port;
     }
@@ -32,7 +32,7 @@ public class User {
         try{
             PrintWriter out = new PrintWriter(getSocket().getOutputStream(),true);
             out.println(message);
-
+            out.flush();
         }catch (Exception e){
             System.out.println(e);
         }
