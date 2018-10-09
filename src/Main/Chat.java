@@ -33,6 +33,8 @@ public class Chat {
                         Socket connection = sersock.accept();
                         User user = new User(connection, sersock.getLocalPort());
                         user.printMessage();
+                        System.out.println(user);
+                        System.out.println("server: "+ connection);
                         users.add(user);                   
                     }catch (Exception e){
                         System.out.println(e);
@@ -51,6 +53,7 @@ public class Chat {
         Thread serverThread= new Thread(serverTask);
         serverThread.start();
         System.out.println("Connection Successful! Type help for more info..");
+        System.out.println(sersock);
 
         while(!exit)
         {
@@ -99,7 +102,7 @@ public class Chat {
                 else if(input.toLowerCase().contains("terminate")){
                 	String[] inputs = input.toLowerCase().split("\\s+");
                 	
-                	int userId = Integer.parseInt(inputs[1]);
+                	int userId = (Integer.parseInt(inputs[1]))-1;
                 		for (User user:users) {
                 			if(user.getId() == userId) {
                 				users.remove(userId);
@@ -113,9 +116,15 @@ public class Chat {
                 else if(input.toLowerCase().contains("send")) {//send message to user with id given
                 	String[] inputs = input.toLowerCase().split("\\s+");
                 	
-                		int userId = Integer.parseInt(inputs[1]);
-                		User user = users.get(userId-1);
-                		String message = inputs[2];
+                	String message = null;
+               		int userId = Integer.parseInt(inputs[1]);
+               		User user = users.get(userId-1);
+                		
+                		for(int i=2; i < inputs.length; i++) {
+                			message += i;
+                		}
+                		
+                		
                 		
                 		if(user.getSocket()!=null) {
                 			/*try {
@@ -131,7 +140,7 @@ public class Chat {
                     System.out.println(users.size());
                     System.out.println("ID: \t IP Address \t\t Port Number");
                     for (User user:users) {
-                        System.out.println(user.getId() + " : IP Address   " + user.getPort());
+                        System.out.println(user);
                         
                     }
                 }
