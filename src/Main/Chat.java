@@ -64,7 +64,7 @@ public class Chat {
 
         Thread serverThread= new Thread(serverTask);
         serverThread.start();
-        System.out.println("Connection Successful! Type help for more info..");
+        System.out.println("Connection Successful! Connect now or type help for more information..");
         System.out.println(sersock);
 
         while(!exit)
@@ -122,6 +122,7 @@ public class Chat {
                 		for (User user:users) {
                 			if(user.getId() == userId) {
                 				users.remove(userId);
+                				System.out.println("Your connection with " + " has been terminated successfully!");
                 			}
                 			else {
                 				System.out.println("No user exists");
@@ -132,25 +133,22 @@ public class Chat {
                 else if(input.toLowerCase().contains("send")) {//send message to user with id given
                 	String[] inputs = input.toLowerCase().split("\\s+");
                 	
-                	String message = null;
+                	String message = " ";
                		int userId = Integer.parseInt(inputs[1]);
-               		User user = users.get(userId-1);
-                		
-                		for(int i=2; i < inputs.length; i++) {
-                			message += i;
-                		}
-                		
-                		
-                		
+                  		User user = users.get(userId-1);
+                  		
+                  		//check if user is connected 
                 		if(user.getSocket()!=null) {
-                			/*try {
+                			for(int i=2; i < inputs.length; i++) {
+                				message += inputs[i] + " ";
+                			}
+                		
+                			try {
                 				user.sendMessage(message);
-                			}catch(IOException s) {
+                			}catch(SocketException s) {
                 				System.out.println("Message Send Unsuccessful. Please check connection ID");
-                			}*/
-                		}
-                	
-                	
+                			}
+                		}    	
                 }
                 else if (input.toLowerCase().contains("list")){
                     System.out.println(users.size());
@@ -160,7 +158,7 @@ public class Chat {
                         
                     }
                 }else {
-                    System.out.println("type 'help' for some assistance");
+                    System.out.println("type 'help' for assistance");
                 }
 
             }
