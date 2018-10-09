@@ -2,12 +2,11 @@ package Main;
 
 import javafx.concurrent.Task;
 
-
 import java.net.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class Chat {
+public class test {
 
     private static Scanner scanner = new Scanner(System.in);
     static boolean exit= false;

@@ -1,11 +1,13 @@
 package Main;
 
+import javafx.concurrent.Task;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-public class User {
+public class User extends Task<Void> {
     private int id=1;
     private Socket socket;
     private int port;
@@ -55,5 +57,25 @@ public class User {
     @Override
     public String toString() {
         return ("" + getId() + ": " + getSocket().getInetAddress().toString()+ ":"+ getPort());
+    }
+
+    @Override
+    public void run() {
+        try{
+            BufferedReader reader = new BufferedReader(new InputStreamReader(getSocket().getInputStream()));
+            String message;
+            while((message= reader.readLine())!=null){
+                System.out.println(message);
+            }
+
+
+        }catch (Exception e){
+            System.out.println(e);
+        }
+    }
+
+    @Override
+    protected Void call() throws Exception {
+        return null;
     }
 }
