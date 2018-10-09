@@ -2,11 +2,13 @@ package Main;
 
 import javafx.concurrent.Task;
 
+
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.net.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -19,7 +21,7 @@ public class Chat {
 
     public static void main(String args[]) throws Exception
     {
-        users = new ArrayList<User>();
+        users = new ArrayList<>();
         int portNumber = Integer.parseInt(args[0]);
         ServerSocket sersock = new ServerSocket(portNumber);
 
@@ -31,16 +33,24 @@ public class Chat {
                 while(!sersock.isClosed()){
                     try{
                         Socket connection = sersock.accept();
-                        User user = new User(connection, sersock.getLocalPort());
-                        user.printMessage();
-                        System.out.println(user);
-                        System.out.println("server: "+ connection);
-                        users.add(user);                   
+                        User home = new User(connection, sersock.getLocalPort());
+                        users.add(home);
+                        Task<Void> chatTask = new Task<Void>() {
+                            @Override
+                            public void run() {
+                                home.printMessage();
+                            }
+
+                            @Override
+                            protected Void call() throws Exception {
+                                return null;
+                            }
+                        };
+                        Thread homeThread = new Thread(chatTask);
+                        homeThread.start();
                     }catch (Exception e){
-                        System.out.println(e);
+                        System.out.println("closing the server");
                     }
-
-
                 }
             }
 
@@ -50,6 +60,8 @@ public class Chat {
 
             }
         };
+
+
         Thread serverThread= new Thread(serverTask);
         serverThread.start();
         System.out.println("Connection Successful! Type help for more info..");
@@ -63,6 +75,7 @@ public class Chat {
                 if(input.equals("0")|| input.toLowerCase().equals("exit")){
                     sersock.close();
                     exit=true;
+                    System.exit(0);
                     break;
                 }
                 else if (input.toLowerCase().contains("myip")){
@@ -96,6 +109,9 @@ public class Chat {
                         user.sendMessage("sending connection from home"); //sending message
                         System.out.println("connect to "+ inputs[1] + " "+ inputs[2]);
                         System.out.println("Connection Successful");
+                    }
+                    else {
+                        System.out.println("please enter 'connect <ip> <port>");
                     }
 
                 }
@@ -143,6 +159,8 @@ public class Chat {
                         System.out.println(user);
                         
                     }
+                }else {
+                    System.out.println("type 'help' for some assistance");
                 }
 
             }
