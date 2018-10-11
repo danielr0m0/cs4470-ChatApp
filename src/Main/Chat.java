@@ -143,11 +143,7 @@ public class Chat {
                 				message += inputs[i] + " ";
                 			}
                 		
-                			try {
-                				user.sendMessage(message);
-                			}catch(SocketException s) {
-                				System.out.println("Message Send Unsuccessful. Please check connection ID");
-                			}
+                			user.sendMessage(message);
                 		}    	
                 }
                 else if (input.toLowerCase().contains("list")){
