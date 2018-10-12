@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -61,8 +62,8 @@ public class Chat {
 
         Thread serverThread= new Thread(serverTask);
         serverThread.start();
-        System.out.println("Connection Successful! Connect now or type help for more information..");
-        System.out.println(sersock);
+        System.out.println("Connection Successful! Connect now to a destination port or type help for more information..");
+        
 
         //commit
         while(!exit)
@@ -71,6 +72,9 @@ public class Chat {
                 String input = scanner.nextLine();
 
                 if(input.equals("0")|| input.toLowerCase().equals("exit")){
+                	for(User user:users) {
+                		user.getSocket().close();
+                	}
                     sersock.close();
                     exit=true;
                     System.exit(0);
@@ -103,12 +107,25 @@ public class Chat {
                     if(inputs.length == 3){
                         Socket socket = new Socket(inputs[1], Integer.parseInt(inputs[2]));
                         User user = new User(socket,Integer.parseInt(inputs[2]));
-                        users.add(user);
-                        user.sendMessage("sending connection from home"); //sending message
-                        System.out.println("connect to "+ inputs[1] + " "+ inputs[2]);
-
-                        Thread userThread = new Thread(user);
-                        userThread.start();
+                         boolean isDuplicate = false;
+                         
+                        for(User checkUser:users) {
+                        	if(user.isEquals(checkUser)) {
+                        		System.out.println("Connection with user already exist.");
+                        		isDuplicate = true;
+                        	}
+                        }
+                        
+                        	if(!isDuplicate) {
+                        		users.add(user);
+                        	
+                        	user.sendMessage("sending connection from home"); //sending message
+                        	System.out.println("Successful connection to "+ inputs[1] + " "+ inputs[2]);
+                        
+                        
+                        	Thread userThread = new Thread(user);
+                        	userThread.start();
+                        	}
                     }
                     else {
                         System.out.println("please enter 'connect <ip> <port>");
@@ -117,21 +134,23 @@ public class Chat {
                 }
                 else if(input.toLowerCase().contains("terminate")){
                 	String[] inputs = input.toLowerCase().split("\\s+");
+                	boolean found = false;
                 	
                 	int userId = (Integer.parseInt(inputs[1]));
-                		for (User user:users) {
-                			if(user.getId() == userId) {
-                				user.sendMessage("Your connection has been terminated with " + InetAddress.getLocalHost().getHostAddress());
-                				user.getSocket().close();
+                		for (int i = 0; i < users.size(); i++) {
+                			if(i == userId-1) {
+                				users.get(i).sendMessage("Your connection has been terminated with " + InetAddress.getLocalHost().getHostAddress());
+                				users.get(i).getSocket().close();
                 				users.remove(userId-1);
                 				System.out.println("Your connection with user " + userId + " has been terminated successfully!");
-                				
+                				found = true;
                 				break;
                 			}
-                			else {
-                				System.out.println("No user exists");
-                			}
-                		}                	     	         	
+                			
+                		}        
+                		if (!found){
+            				System.out.println("No user exists");
+            			}
                     	
                 }
                 else if(input.toLowerCase().contains("send")) {//send message to user with id given
@@ -151,10 +170,9 @@ public class Chat {
                 		}    	
                 }
                 else if (input.toLowerCase().contains("list")){
-                    System.out.println(users.size());
-                    System.out.println("ID: \t IP Address \t\t Port Number");
-                    for (User user:users) {
-                        System.out.println(user);
+                    System.out.println("ID: \t\t IP Address \t\t Port Number");
+                    for (int i =0; i < users.size(); i++) {
+                        System.out.println((i+1) + " :\t\t " + " " + users.get(i));
                         
                     }
                 }else {
