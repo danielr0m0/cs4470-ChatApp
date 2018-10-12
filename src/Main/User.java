@@ -8,7 +8,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 public class User extends Task<Void> {
-    private int id=1;
+    private int id=0;
     private Socket socket;
     private int port;
 
@@ -16,6 +16,7 @@ public class User extends Task<Void> {
         this.id=id++;
         this.socket = socket;
         this.port = port;
+        id++;
     }
 
     public int getId() {

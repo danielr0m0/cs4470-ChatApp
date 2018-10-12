@@ -3,6 +3,7 @@ package Main;
 import javafx.concurrent.Task;
 
 
+import java.io.IOException;
 import java.net.*;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -25,14 +26,24 @@ public class Chat {
 
             @Override
             public void run() {
+                Socket connection = null;
+                User home = null;
                 while(!sersock.isClosed()){
                     try{
-                        Socket connection = sersock.accept();
-                        User home = new User(connection, sersock.getLocalPort());
+                        connection = sersock.accept();
+                        home = new User(connection, sersock.getLocalPort());
                         users.add(home);
                         home.printMessage();
                     }catch (Exception e){
                         System.out.println("closing the server");
+                    }finally {
+                        users.remove(home);
+                        try {
+                            connection.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
                     }
                 }
             }
@@ -91,10 +102,10 @@ public class Chat {
                 }
                 else if(input.toLowerCase().contains("message")){
                     String[] inputs=  input.toLowerCase().split("\\s+");
-                    users.get(0).sendMessage("hello");
+                    users.get(Integer.parseInt(inputs[1])).sendMessage(inputs[2]);
                 }
                 else if (input.toLowerCase().contains("list")){
-                    System.out.println(users.size());
+                    System.out.println("size: "+ users.size());
                     for (User user:users) {
                         System.out.println(user);
                     }
