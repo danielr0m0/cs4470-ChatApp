@@ -62,7 +62,6 @@ public class Chat {
         Thread serverThread= new Thread(serverTask);
         serverThread.start();
         System.out.println("Connection Successful! Connect now or type help for more information..");
-        System.out.println(sersock);
 
         //commit
         while(!exit)
@@ -151,11 +150,14 @@ public class Chat {
                 		}    	
                 }
                 else if (input.toLowerCase().contains("list")){
-                    System.out.println(users.size());
+                	updateList();
                     System.out.println("ID: \t IP Address \t\t Port Number");
-                    for (User user:users) {
-                        System.out.println(user);
-                        
+                    int id = 1;
+                    
+                   
+                    for(User user:users) {
+                        System.out.println(id + "\t "+user.getSocket().getInetAddress() +"\t \t "+ user.getPort());
+                        id++;
                     }
                 }else {
                     System.out.println("type 'help' for assistance");
@@ -164,5 +166,13 @@ public class Chat {
             }
 
         }
+    }
+    
+    public static void updateList() {
+    	 for(int i = 0; i < users.size(); i++) {
+         	if(users.get(i).getSocket()==null) {
+         		users.remove(i);
+         	}
+         }
     }
 }
