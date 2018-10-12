@@ -2,10 +2,11 @@ package Main;
 
 import javafx.concurrent.Task;
 
+
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -19,7 +20,7 @@ public class Chat {
 
     public static void main(String args[]) throws Exception
     {
-        users = new ArrayList<User>();
+        users = new ArrayList<>();
         int portNumber = Integer.parseInt(args[0]);
         ServerSocket sersock = new ServerSocket(portNumber);
 
@@ -28,17 +29,25 @@ public class Chat {
 
             @Override
             public void run() {
+                Socket connection = null;
+                User home = null;
                 while(!sersock.isClosed()){
                     try{
-                        Socket connection = sersock.accept();
-                        User user = new User(connection, sersock.getLocalPort());
-                        user.printMessage();
-                        users.add(user);                   
+                        connection = sersock.accept();
+                        home = new User(connection, sersock.getLocalPort());
+                        users.add(home);
+                        home.printMessage();
                     }catch (Exception e){
-                        System.out.println(e);
+                        System.out.println("closing the server");
+                    }finally {
+                        users.remove(home);
+                        try {
+                            connection.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
                     }
-
-
                 }
             }
 
@@ -48,10 +57,14 @@ public class Chat {
 
             }
         };
+
+
         Thread serverThread= new Thread(serverTask);
         serverThread.start();
-        System.out.println("Connection Successful! Type help for more info..");
+        System.out.println("Connection Successful! Connect now or type help for more information..");
+        System.out.println(sersock);
 
+        //commit
         while(!exit)
         {
             if(scanner.hasNext()){
@@ -60,16 +73,17 @@ public class Chat {
                 if(input.equals("0")|| input.toLowerCase().equals("exit")){
                     sersock.close();
                     exit=true;
+                    System.exit(0);
                     break;
                 }
-                else if (input.toLowerCase().contains("myip")){
+                else if (input.toLowerCase().contains("ip")){
                     try {
                         System.out.println(InetAddress.getLocalHost().getHostAddress());
                     } catch (UnknownHostException e) {
                         e.printStackTrace();
                     }
                 }
-                else if(input.toLowerCase().contains("myport")){
+                else if(input.toLowerCase().contains("port")){
                     System.out.println(portNumber);
                 }
                 else if(input.toLowerCase().contains("help")){
@@ -92,17 +106,27 @@ public class Chat {
                         users.add(user);
                         user.sendMessage("sending connection from home"); //sending message
                         System.out.println("connect to "+ inputs[1] + " "+ inputs[2]);
-                        System.out.println("Connection Successful");
+
+                        Thread userThread = new Thread(user);
+                        userThread.start();
+                    }
+                    else {
+                        System.out.println("please enter 'connect <ip> <port>");
                     }
 
                 }
                 else if(input.toLowerCase().contains("terminate")){
                 	String[] inputs = input.toLowerCase().split("\\s+");
                 	
-                	int userId = Integer.parseInt(inputs[1]);
+                	int userId = (Integer.parseInt(inputs[1]));
                 		for (User user:users) {
                 			if(user.getId() == userId) {
-                				users.remove(userId);
+                				user.sendMessage("Your connection has been terminated with " + InetAddress.getLocalHost().getHostAddress());
+                				user.getSocket().close();
+                				users.remove(userId-1);
+                				System.out.println("Your connection with user " + userId + " has been terminated successfully!");
+                				
+                				break;
                 			}
                 			else {
                 				System.out.println("No user exists");
@@ -113,27 +137,28 @@ public class Chat {
                 else if(input.toLowerCase().contains("send")) {//send message to user with id given
                 	String[] inputs = input.toLowerCase().split("\\s+");
                 	
-                		int userId = Integer.parseInt(inputs[1]);
-                		User user = users.get(userId-1);
-                		String message = inputs[2];
-                		
+                	String message = " ";
+               		int userId = Integer.parseInt(inputs[1]);
+                  		User user = users.get(userId-1);
+                  		
+                  		//check if user is connected 
                 		if(user.getSocket()!=null) {
-                			/*try {
-                				user.sendMessage(message);
-                			}catch(IOException s) {
-                				System.out.println("Message Send Unsuccessful. Please check connection ID");
-                			}*/
-                		}
-                	
-                	
+                			for(int i=2; i < inputs.length; i++) {
+                				message += inputs[i] + " ";
+                			}
+                		
+                			user.sendMessage(message);
+                		}    	
                 }
                 else if (input.toLowerCase().contains("list")){
                     System.out.println(users.size());
                     System.out.println("ID: \t IP Address \t\t Port Number");
                     for (User user:users) {
-                        System.out.println(user.getId() + " : IP Address   " + user.getPort());
+                        System.out.println(user);
                         
                     }
+                }else {
+                    System.out.println("type 'help' for assistance");
                 }
 
             }
