@@ -5,7 +5,9 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-public class User {
+import javafx.concurrent.Task;
+
+public class User extends Task<Void> {
     private int id=1;
     private Socket socket;
     private int port;
@@ -56,4 +58,17 @@ public class User {
     public String toString() {
         return ("" + getId() + ": " + getSocket().getInetAddress().toString()+ ":"+ getPort());
     }
+    
+    
+
+	@Override
+	public void run() {
+		printMessage();
+	}
+
+	@Override
+	protected Void call() throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

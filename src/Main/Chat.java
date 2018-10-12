@@ -78,14 +78,14 @@ public class Chat {
                     System.exit(0);
                     break;
                 }
-                else if (input.toLowerCase().contains("myip")){
+                else if (input.toLowerCase().contains("ip")){
                     try {
                         System.out.println(InetAddress.getLocalHost().getHostAddress());
                     } catch (UnknownHostException e) {
                         e.printStackTrace();
                     }
                 }
-                else if(input.toLowerCase().contains("myport")){
+                else if(input.toLowerCase().contains("port")){
                     System.out.println(portNumber);
                 }
                 else if(input.toLowerCase().contains("help")){
@@ -109,6 +109,8 @@ public class Chat {
                         user.sendMessage("sending connection from home"); //sending message
                         System.out.println("connect to "+ inputs[1] + " "+ inputs[2]);
                         System.out.println("Connection Successful");
+                        Thread userThread = new Thread(user);
+                        userThread.start();
                     }
                     else {
                         System.out.println("please enter 'connect <ip> <port>");
@@ -118,11 +120,15 @@ public class Chat {
                 else if(input.toLowerCase().contains("terminate")){
                 	String[] inputs = input.toLowerCase().split("\\s+");
                 	
-                	int userId = (Integer.parseInt(inputs[1]))-1;
+                	int userId = (Integer.parseInt(inputs[1]));
                 		for (User user:users) {
                 			if(user.getId() == userId) {
-                				users.remove(userId);
-                				System.out.println("Your connection with " + " has been terminated successfully!");
+                				user.sendMessage("Your connection has been terminated with " + InetAddress.getLocalHost().getHostAddress());
+                				user.getSocket().close();
+                				users.remove(userId-1);
+                				System.out.println("Your connection with user " + userId + " has been terminated successfully!");
+                				
+                				break;
                 			}
                 			else {
                 				System.out.println("No user exists");
