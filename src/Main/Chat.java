@@ -4,7 +4,10 @@ import javafx.concurrent.Task;
 
 
 import java.io.IOException;
-import java.net.*;
+import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -58,6 +61,8 @@ public class Chat {
 
         Thread serverThread= new Thread(serverTask);
         serverThread.start();
+        System.out.println("Connection Successful! Connect now or type help for more information..");
+        System.out.println(sersock);
 
         //commit
         while(!exit)
@@ -82,7 +87,15 @@ public class Chat {
                     System.out.println(portNumber);
                 }
                 else if(input.toLowerCase().contains("help")){
-                    System.out.println("help me Please!");
+                	
+                    System.out.println("myip\t Displays the IP Address of This Process");
+                    System.out.println("myport\t Displays the Port on Which this Process is Listening for Incoming Connections");
+                    System.out.println("list\t Displays a list of all connections with Connection IDs");
+                    System.out.println("connect <destination> <port no>\t Establishes a new connection to specified IP Address at specified port number");
+                    System.out.println("terminate <connection id>\t Terminates the connection listed under the specified Connection ID");
+                    System.out.println("send <connection id> <message>\t Sends the desired message to the Connection listed under the specified Connection ID");
+                    System.out.println("exit\t Closes all connections and Terminates this Process");        
+               
                 }
                 else if(input.toLowerCase().contains("connect")){
                     String[] inputs=  input.toLowerCase().split("\\s+");
@@ -93,25 +106,59 @@ public class Chat {
                         users.add(user);
                         user.sendMessage("sending connection from home"); //sending message
                         System.out.println("connect to "+ inputs[1] + " "+ inputs[2]);
-                        Thread thread = new Thread(user);
-                        thread.start();
+
+                        Thread userThread = new Thread(user);
+                        userThread.start();
                     }
                     else {
                         System.out.println("please enter 'connect <ip> <port>");
                     }
 
                 }
-                else if(input.toLowerCase().contains("message")){
-                    String[] inputs=  input.toLowerCase().split("\\s+");
-                    users.get(Integer.parseInt(inputs[1])).sendMessage(inputs[2]);
+                else if(input.toLowerCase().contains("terminate")){
+                	String[] inputs = input.toLowerCase().split("\\s+");
+                	
+                	int userId = (Integer.parseInt(inputs[1]));
+                		for (User user:users) {
+                			if(user.getId() == userId) {
+                				user.sendMessage("Your connection has been terminated with " + InetAddress.getLocalHost().getHostAddress());
+                				user.getSocket().close();
+                				users.remove(userId-1);
+                				System.out.println("Your connection with user " + userId + " has been terminated successfully!");
+                				
+                				break;
+                			}
+                			else {
+                				System.out.println("No user exists");
+                			}
+                		}                	     	         	
+                    	
+                }
+                else if(input.toLowerCase().contains("send")) {//send message to user with id given
+                	String[] inputs = input.toLowerCase().split("\\s+");
+                	
+                	String message = " ";
+               		int userId = Integer.parseInt(inputs[1]);
+                  		User user = users.get(userId-1);
+                  		
+                  		//check if user is connected 
+                		if(user.getSocket()!=null) {
+                			for(int i=2; i < inputs.length; i++) {
+                				message += inputs[i] + " ";
+                			}
+                		
+                			user.sendMessage(message);
+                		}    	
                 }
                 else if (input.toLowerCase().contains("list")){
-                    System.out.println("size: "+ users.size());
+                    System.out.println(users.size());
+                    System.out.println("ID: \t IP Address \t\t Port Number");
                     for (User user:users) {
                         System.out.println(user);
+                        
                     }
                 }else {
-                    System.out.println("type 'help' for some assistance");
+                    System.out.println("type 'help' for assistance");
                 }
 
             }

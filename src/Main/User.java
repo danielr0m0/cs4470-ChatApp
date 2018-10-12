@@ -9,6 +9,7 @@ import java.net.Socket;
 
 public class User extends Task<Void> {
     private int id=0;
+
     private Socket socket;
     private int port;
 
