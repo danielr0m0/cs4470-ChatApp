@@ -59,6 +59,7 @@ public class Chat {
         Thread serverThread= new Thread(serverTask);
         serverThread.start();
 
+        //commit
         while(!exit)
         {
             if(scanner.hasNext()){
