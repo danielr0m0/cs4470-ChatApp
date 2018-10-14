@@ -107,7 +107,7 @@ public class Chat {
                     if(inputs.length == 3){
                         Socket socket = new Socket(inputs[1], Integer.parseInt(inputs[2]));
                         User user = new User(socket,Integer.parseInt(inputs[2]));
-                         boolean isDuplicate = false;
+                        boolean isDuplicate = false;
                          
                         for(User checkUser:users) {
                         	if(user.isEquals(checkUser)) {
@@ -119,10 +119,8 @@ public class Chat {
                         	if(!isDuplicate) {
                         		users.add(user);
                         	
-                        	user.sendMessage("sending connection from home"); //sending message
+                        	user.sendMessage("sending connection from" + InetAddress.getLocalHost().getHostAddress()+":"+portNumber ); //sending message
                         	System.out.println("Successful connection to "+ inputs[1] + " "+ inputs[2]);
-                        
-                        
                         	Thread userThread = new Thread(user);
                         	userThread.start();
                         	}
@@ -167,7 +165,7 @@ public class Chat {
                 				message += inputs[i] + " ";
                 			}
                 		
-                			user.sendMessage(message);
+                			user.sendMessage("message: "+message+"\n"+"from:"+InetAddress.getLocalHost().getHostAddress());
                 		}    	
                 }
                 else if (input.toLowerCase().contains("list")){

@@ -80,7 +80,6 @@ public class User extends Task<Void> {
         }
     }
     
-    
 
 	@Override
     protected Void call() throws Exception {
