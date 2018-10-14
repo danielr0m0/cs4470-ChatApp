@@ -74,6 +74,9 @@ public class User extends Task<Void> {
         }catch (Exception e){
             System.out.println(e);
         }
+        finally {
+            socket = null;
+        }
     }
 
     @Override
