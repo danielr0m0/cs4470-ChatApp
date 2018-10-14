@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.concurrent.SynchronousQueue;
 
 import javafx.concurrent.Task;
 
@@ -77,7 +76,7 @@ public class User extends Task<Void> {
             System.out.println(e);
         }
         finally {
-            socket = null;
+        	socket = null;
         }
     }
     

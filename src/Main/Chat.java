@@ -64,7 +64,7 @@ public class Chat {
         Thread serverThread= new Thread(serverTask);
         serverThread.start();
 
-        System.out.println("Connection Successful! Connect now to a destination port or type help for more information..");
+        System.out.println("Connection Successful! type help for more information..");
 
         while(!exit)
         {
@@ -171,10 +171,13 @@ public class Chat {
                 		}    	
                 }
                 else if (input.toLowerCase().contains("list")){
-                  System.out.println("ID: \t\t IP Address \t\t Port Number");
-                    for (int i =0; i < users.size(); i++) {
-                        System.out.println((i+1) + " :\t\t " + " " + users.get(i));
 
+                	updateList();
+                    System.out.println("ID: \t IP Address \t\t Port Number");
+                    int id = 1;
+                    for(User user:users) {
+                        System.out.println(id + "\t "+user.getSocket().getInetAddress() +"\t \t "+ user.getPort());
+                        id++;
                     }
                 }else {
                     System.out.println("type 'help' for assistance");
@@ -185,12 +188,13 @@ public class Chat {
         }
     }
 
-    public static void updateList(){
-        for (int i = 0; i < users.size() ; i++) {
-            if(users.get(i).getSocket() == null){
-
-            }
-        }
+    
+    public static void updateList() {
+    	 for(int i = 0; i < users.size(); i++) {
+         	if(users.get(i).getSocket()==null) {
+         		users.remove(i);
+         	}
+         }
     }
 }
 
