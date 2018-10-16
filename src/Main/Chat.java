@@ -95,6 +95,7 @@ public class Chat {
                     System.out.println("exit\t Closes all connections and Terminates this Process");
 
                 } else if (input.toLowerCase().contains("connect")) {
+                    updateList();
                     String[] inputs = input.toLowerCase().split("\\s+");
 
                     if (inputs.length == 3) {
