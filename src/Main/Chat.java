@@ -168,7 +168,7 @@ public class Chat {
                             for (int i = 2; i < inputs.length; i++) {
                                 message += inputs[i] + " ";
                             }
-                            user.sendMessage("message: " + message + "\n" + "from:" + InetAddress.getLocalHost().getHostAddress());
+                            user.sendMessage("\nfrom: " + InetAddress.getLocalHost().getHostAddress()+ "\nmessage: " + message + "\n");
                         }
                         else {
                             System.out.println("type list to get the correct id");
