@@ -180,7 +180,7 @@ public class Chat {
                 } else if (input.toLowerCase().contains("list")) {
                     updateList();
                     if (users.size() == 0) {
-                        System.out.println("try connecting to someone...");
+                        System.out.println("List is empty. Connect to someone");
                     } else {
                         System.out.println("ID: \t IP Address \t\t Port Number");
                         int id = 1;
