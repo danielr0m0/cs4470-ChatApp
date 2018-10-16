@@ -45,7 +45,6 @@ public class Chat {
                             connection.close();
                         } catch (IOException e) {
                             System.out.println("closed");
-                            e.printStackTrace();
                         }
                         break;
                     }

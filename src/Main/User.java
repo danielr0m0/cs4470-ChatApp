@@ -73,7 +73,7 @@ public class User extends Task<Void> {
 
 
         }catch (Exception e){
-            System.out.println(e);
+            System.out.println("socket has been closed");
         }
         finally {
         	socket = null;
