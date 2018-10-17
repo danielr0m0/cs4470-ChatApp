@@ -19,6 +19,7 @@
 *.tar.gz
 *.rar
 
+test.*
 .project
 .idea/workspace.xml
 .classpath
