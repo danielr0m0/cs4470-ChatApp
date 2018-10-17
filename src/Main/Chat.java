@@ -4,10 +4,7 @@ import javafx.concurrent.Task;
 
 
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.net.UnknownHostException;
+import java.net.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -21,7 +18,8 @@ public class Chat {
     public static void main(String args[]) throws Exception {
         users = new ArrayList<>();
         int portNumber = Integer.parseInt(args[0]);
-        ServerSocket sersock = new ServerSocket(portNumber);
+        ServerSocket sersock = new ServerSocket();
+        sersock.bind(new InetSocketAddress(InetAddress.getLocalHost().getHostAddress(), portNumber));
 
 
         Task<Void> serverTask = new Task<Void>() {
