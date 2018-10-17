@@ -1,20 +1,27 @@
 package Main;
 
+import javafx.concurrent.Task;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-import javafx.concurrent.Task;
-
 public class User extends Task<Void> {
-	private Socket socket;
+    private int id=0;
+
+    private Socket socket;
     private int port;
 
     public User(Socket socket, int port) {
+        this.id=id++;
         this.socket = socket;
         this.port = port;
-        
+        id++;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public Socket getSocket() {
@@ -48,18 +55,10 @@ public class User extends Task<Void> {
             System.out.println(e);
         }
     }
-    
-    public boolean isEquals(User u) {
-    
-    		if(socket.getLocalAddress().equals(u.getSocket().getLocalAddress())&& port == u.getPort()){
-    			return true;		
-    		}
-    	return false;
-    }
 
     @Override
     public String toString() {
-        return (getSocket().getInetAddress().toString()+ "\t\t"+ getPort());
+        return ("" + getId() + ": " + getSocket().getInetAddress().toString()+ ":"+ getPort());
     }
 
     @Override
@@ -73,15 +72,14 @@ public class User extends Task<Void> {
 
 
         }catch (Exception e){
-            System.out.println("socket has been closed");
+            System.out.println(e);
         }
         finally {
-        	socket = null;
+            socket = null;
         }
     }
-    
 
-	@Override
+    @Override
     protected Void call() throws Exception {
         return null;
     }
