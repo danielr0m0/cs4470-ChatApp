@@ -110,6 +110,9 @@ public class Chat {
                             for (User checkUser : users) {
                                 if (user.isEquals(checkUser)) {
                                     System.out.println("Connection with user already exist.");
+                                    System.out.println(user);
+                                    System.out.println("=");
+                                    System.out.println(checkUser);
                                     isDuplicate = true;
                                 }
                             }
