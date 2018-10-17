@@ -39,7 +39,6 @@ public class Chat {
                         home.printMessage();
                     }catch (Exception e){
                         System.out.println("closing the server");
-
                     }finally {
                         users.remove(home);
                         try {
@@ -47,7 +46,7 @@ public class Chat {
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-                        break;
+
                     }
                 }
             }
@@ -63,6 +62,7 @@ public class Chat {
         Thread serverThread= new Thread(serverTask);
         serverThread.start();
         System.out.println("Connection Successful! Connect now or type help for more information..");
+        System.out.println(sersock);
 
         //commit
         while(!exit)
@@ -135,7 +135,6 @@ public class Chat {
 
                 }
                 else if(input.toLowerCase().contains("send")) {//send message to user with id given
-                    updateList();
                     String[] inputs = input.toLowerCase().split("\\s+");
 
                     String message = " ";
@@ -152,7 +151,7 @@ public class Chat {
                     }
                 }
                 else if (input.toLowerCase().contains("list")){
-                    updateList();
+                    System.out.println(users.size());
                     System.out.println("ID: \t IP Address \t\t Port Number");
                     for (User user:users) {
                         System.out.println(user);
@@ -166,13 +165,4 @@ public class Chat {
 
         }
     }
-
-    public static void updateList(){
-        for (int i = 0; i < users.size() ; i++) {
-            if(users.get(i).getSocket() == null){
-
-            }
-        }
-    }
 }
-
