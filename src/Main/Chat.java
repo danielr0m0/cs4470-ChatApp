@@ -3,7 +3,9 @@ package Main;
 import javafx.concurrent.Task;
 
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.*;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -30,10 +32,22 @@ public class Chat {
                 User home = null;
                 while (!sersock.isClosed()) {
                     try {
+                        updateList();
                         connection = sersock.accept();
                         home = new User(connection, sersock.getLocalPort());
                         users.add(home);
-                        home.printMessage();
+                        try{
+                            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                            String message;
+                            while((message= reader.readLine())!=null){
+                                System.out.println(message);
+                            }
+                        }catch (Exception e){
+                            System.out.println("socket has been closed");
+                        }
+                        finally {
+                            connection = null;
+                        }
                     } catch (Exception e) {
                         System.out.println("closing the server");
 
@@ -107,15 +121,15 @@ public class Chat {
                             User user = new User(socket, Integer.parseInt(inputs[2]));
                             boolean isDuplicate = false;
 
-                            for (User checkUser : users) {
-                                if (user.isEquals(checkUser)) {
-                                    System.out.println("Connection with user already exist.");
-                                    System.out.println(user);
-                                    System.out.println("=");
-                                    System.out.println(checkUser);
-                                    isDuplicate = true;
-                                }
-                            }
+//                            for (User checkUser : users) {
+//                                if (user.isEquals(checkUser)) {
+//                                    System.out.println("Connection with user already exist.");
+//                                    System.out.println(user);
+//                                    System.out.println("=");
+//                                    System.out.println(checkUser);
+//                                    isDuplicate = true;
+//                                }
+//                            }
 
                             if (!isDuplicate) {
                                 users.add(user);
