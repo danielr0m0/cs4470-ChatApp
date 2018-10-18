@@ -70,6 +70,7 @@ public class Chat {
 
                 if (input.equals("0") || input.toLowerCase().equals("exit")) {
                     for (User user : users) {
+                        user.sendMessage(InetAddress.getLocalHost().getHostAddress() + " is closing connection");
                         user.getSocket().close();
                     }
                     sersock.close();
@@ -160,9 +161,9 @@ public class Chat {
                     String[] inputs = input.toLowerCase().split("\\s+");
 
                     String message = " ";
-                    int userId = Integer.parseInt(inputs[1]);
+                    int userId = Integer.parseInt(inputs[1])-1;
                     if (userId < users.size() || userId > 0) {
-                        User user = users.get(userId - 1);
+                        User user = users.get(userId);
 
                         //check if user is connected
                         if (user.getSocket() != null) {

@@ -50,8 +50,16 @@ public class User extends Task<Void> {
     }
     
     public boolean isEquals(User u) {
-    
-    		if(socket.getLocalAddress().equals(u.getSocket().getLocalAddress())&& port == u.getPort()){
+            String ip1= socket.getLocalAddress().toString();
+        ip1= ip1.replace("/","");
+        ip1=ip1.replace(".","");
+
+        String ip2= u.getSocket().getLocalAddress().toString();
+        ip2= ip2.replace("/","");
+        ip2=ip2.replace(".","");
+
+
+    		if(Integer.parseInt(ip1)==Integer.parseInt(ip2)&& port == u.getPort()){
     			return true;		
     		}
     	return false;
