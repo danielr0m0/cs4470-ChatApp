@@ -10,11 +10,10 @@ import javafx.concurrent.Task;
 public class User extends Task<Void> {
 	private Socket socket;
     private int port;
-
+    private int total=0;
     public User(Socket socket, int port) {
         this.socket = socket;
         this.port = port;
-        
     }
 
     public Socket getSocket() {

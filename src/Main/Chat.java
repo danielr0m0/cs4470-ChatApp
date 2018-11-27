@@ -3,6 +3,7 @@ package Main;
 import javafx.concurrent.Task;
 
 
+import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
@@ -10,20 +11,27 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class Chat {
 
     private static Scanner scanner = new Scanner(System.in);
     static boolean exit = false;
     static ArrayList<User> users;
-
+    static ArrayList<String[]> servers;
+    static int serverSize = 1;
+    public static int[][] costTable;
+    public static int numOfEdges = 0;
 
     public static void main(String args[]) throws Exception {
         users = new ArrayList<>();
+        servers = new ArrayList<>();
+
+        costTable = new int[4][4];
+
         int portNumber = Integer.parseInt(args[0]);
         ServerSocket sersock = new ServerSocket(portNumber);
-
-
         Task<Void> serverTask = new Task<Void>() {
 
             @Override
@@ -35,6 +43,7 @@ public class Chat {
                         connection = sersock.accept();
                         home = new User(connection, sersock.getLocalPort());
                         users.add(home);
+                        serverSize++;
                         home.printMessage();
                     } catch (Exception e) {
                         System.out.println("closing the server");
@@ -67,8 +76,10 @@ public class Chat {
         while (!exit) {
             if (scanner.hasNext()) {
                 String input = scanner.nextLine();
+                String[] inputs = input.split("\\s+");
 
                 if (input.equals("0") || input.toLowerCase().equals("exit")) {
+                    updateList();
                     for (User user : users) {
                         user.sendMessage(InetAddress.getLocalHost().getHostAddress() + " is closing connection");
                         user.getSocket().close();
@@ -77,15 +88,15 @@ public class Chat {
                     exit = true;
                     System.exit(0);
                     break;
-                } else if (input.toLowerCase().contains("ip")) {
+                } else if (inputs[0].toLowerCase().contains("ip")) {
                     try {
                         System.out.println(InetAddress.getLocalHost().getHostAddress());
                     } catch (UnknownHostException e) {
                         e.printStackTrace();
                     }
-                } else if (input.toLowerCase().contains("port")) {
+                } else if (inputs[0].toLowerCase().contains("port")) {
                     System.out.println(portNumber);
-                } else if (input.toLowerCase().contains("help")) {
+                } else if (inputs[0].toLowerCase().contains("help")) {
 
                     System.out.println("myip\t Displays the IP Address of This Process");
                     System.out.println("myport\t Displays the Port on Which this Process is Listening for Incoming Connections");
@@ -95,9 +106,9 @@ public class Chat {
                     System.out.println("send <connection id> <message>\t Sends the desired message to the Connection listed under the specified Connection ID");
                     System.out.println("exit\t Closes all connections and Terminates this Process");
 
-                } else if (input.toLowerCase().contains("connect")) {
+                } else if (inputs[0].toLowerCase().contains("connect")) {
                     updateList();
-                    String[] inputs = input.toLowerCase().split("\\s+");
+                    inputs = input.toLowerCase().split("\\s+");
 
                     if (inputs.length == 3) {
                         Socket socket = null;
@@ -131,8 +142,8 @@ public class Chat {
                         System.out.println("please enter 'connect <ip> <port>");
                     }
 
-                } else if (input.toLowerCase().contains("terminate")) {
-                    String[] inputs = input.toLowerCase().split("\\s+");
+                } else if (inputs[0].toLowerCase().contains("terminate")) {
+                    inputs = input.toLowerCase().split("\\s+");
                     boolean found = false;
 
                     int userId = (Integer.parseInt(inputs[1]));
@@ -156,12 +167,12 @@ public class Chat {
                     }
 
 
-                } else if (input.toLowerCase().contains("send")) {//send message to user with id given
+                } else if (inputs[0].toLowerCase().contains("send")) {//send message to user with id given
                     updateList();
-                    String[] inputs = input.toLowerCase().split("\\s+");
+                    inputs = input.toLowerCase().split("\\s+");
 
                     String message = " ";
-                    int userId = Integer.parseInt(inputs[1])-1;
+                    int userId = Integer.parseInt(inputs[1]) - 1;
                     if (userId < users.size() || userId > 0) {
                         User user = users.get(userId);
 
@@ -170,16 +181,15 @@ public class Chat {
                             for (int i = 2; i < inputs.length; i++) {
                                 message += inputs[i] + " ";
                             }
-                            user.sendMessage("\nfrom: " + InetAddress.getLocalHost().getHostAddress()+ "\nmessage: " + message + "\n");
-                        }
-                        else {
+                            user.sendMessage("\nfrom: " + InetAddress.getLocalHost().getHostAddress() + "\nmessage: " + message + "\n");
+                        } else {
                             System.out.println("type list to get the correct id");
                         }
                     } else {
                         System.out.println("Type list to see who you are connected");
                     }
 
-                } else if (input.toLowerCase().contains("list")) {
+                } else if (inputs[0].toLowerCase().contains("list")) {
                     updateList();
                     if (users.size() == 0) {
                         System.out.println("List is empty. Connect to someone");
@@ -192,6 +202,123 @@ public class Chat {
                         }
                     }
 
+                } else if (inputs[0].toLowerCase().contains("test")) {
+                    System.out.println(serverSize);
+                    System.out.println();
+
+                    System.out.println(numOfEdges);
+                    System.out.println();
+
+                    for (int i = 0; i < costTable.length; i++) {
+                        for (int j = 0; j < costTable[i].length; j++) {
+                            if (costTable[i][j] != 0)
+                                System.out.println((i + 1) + " to " + (j + 1) + " = " + costTable[i][j]);
+                        }
+                    }
+//                    Timer timer = new Timer();
+//                    timer.schedule(new TimerTask() {
+//                        @Override
+//                        public void run() {
+//
+//                            System.out.println("update");
+//                        }
+//                    }, 0,10000);
+
+                }
+                //TODO EVERTHING FOR PROJECT 2
+
+                else if (inputs[0].toLowerCase().contains("server")) {
+                    /**
+                     * TODO -t takes topology files which contains the configuration for the server
+                     * -i routing update interval  : It specifies the time interval between routing updates in seconds
+                     */
+                    String[] parsed = input.split(" ");
+                    if (parsed.length == 5) {
+                        int tIndex = 0;
+                        int iIndex = 0;
+                        for (int i = 0; i < parsed.length; i++) {
+                            if (parsed[i].equals("-t")) {
+                                tIndex = i;
+                            } else if (parsed[i].equals("-i")) {
+                                iIndex = i;
+                            }
+                        }
+                        String topologyFilePath = parsed[tIndex + 1];
+                        //interval is in seconds
+                        int interval = Integer.parseInt(parsed[iIndex + 1]) * 1000 ;
+                        File topology = new File(topologyFilePath);
+
+
+                        if (topology.exists()) {
+                            Timer timer = new Timer();
+                            timer.schedule(new TimerTask() {
+                                @Override
+                                public void run() {
+                                    try {
+                                        Scanner scanner = new Scanner(topology.toPath());
+
+                                        String line = scanner.nextLine();
+
+                                        serverSize = Integer.parseInt(line);
+
+                                        line = scanner.nextLine();
+
+                                        numOfEdges = Integer.parseInt(line);
+
+
+                                        for (int i = 0; i < serverSize; i++) {
+                                            line = scanner.nextLine();
+                                            servers.add(line.split("\\s+"));
+                                        }
+
+                                        for (int i = 0; i < numOfEdges; i++) {
+                                            line = scanner.nextLine();
+
+                                            String[] links = line.split("\\s+");
+                                            int x = Integer.parseInt(links[0]) - 1;
+                                            int y = Integer.parseInt(links[1]) - 1;
+                                            int cost = Integer.parseInt(links[2]);
+
+                                            costTable[x][y] = cost;
+                                        }
+
+
+                                    } catch (Exception e) {
+                                        System.out.println("error ...\n make sure u spelled the file name correctly and have the correct values in files");
+                                        timer.cancel();
+                                    }
+                                }
+                            }, 0, interval);
+                        } else {
+                            System.out.println("file doesnt exists");
+                        }
+                    }
+
+                } else if (inputs[0].toLowerCase().contains("update")) {
+                    /**TODO update the cost between two servers
+                     * arg 1 server id 1
+                     * arg 2 server id 2
+                     * arg 3 cost
+                     */
+
+                } else if (input.toLowerCase().contains("step")) {
+                    /**TODO step Send routing update to neighbors right away. Note that except this, routing updates only
+                     * happen periodically
+                     */
+                } else if (inputs[0].toLowerCase().contains("packets")) {
+                    /**TODO packets Display the number of distance vector packets this server has received since the last
+                     * invocation of this information.
+                     */
+                } else if (inputs[0].toLowerCase().contains("display")) {
+                    /**TODO Display the current routing table. And the table should be displayed in a sorted order from
+                     */
+                } else if (inputs[0].toLowerCase().contains("disable")) {
+                    /**TODO arg1 server id to disable the link
+                     */
+                } else if (inputs[0].toLowerCase().contains("crash")) {
+                    /**TODO “Close” all connections
+                     *  set the link cost to infinity
+                     */
                 } else {
                     System.out.println("type 'help' for assistance");
                 }
