@@ -26,7 +26,7 @@ public class DijkstraAlgorithm {
         int source = 0;
         int des = 4;
 
-        bellman_ford(graph);
+        bellman_ford(basic);
 
         dijkstra(graph);
     }
