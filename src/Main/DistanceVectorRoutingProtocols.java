@@ -37,19 +37,19 @@ public class DistanceVectorRoutingProtocols {
             @Override
             public void run() {
 
-                try {
-                    ds = new DatagramSocket(portNumber, InetAddress.getLocalHost());
-                    Server s = new Server(ds);
-                    //data received
-                    String str= s.getPackageData();
-                    //parsed the data
-                    parseData(str);
-                    received++;
+                while (true){
+                    try {
+                        ds = new DatagramSocket(portNumber, InetAddress.getLocalHost());
+                        //data received
+                        String str= getPackageData();
+                        //parsed the data
+                        parseData(str);
+                        received++;
 
-                } catch (SocketException | UnknownHostException e) {
-                    e.printStackTrace();
+                    } catch (SocketException | UnknownHostException e) {
+                        e.printStackTrace();
+                    }
                 }
-
             }
 
             @Override
@@ -102,10 +102,11 @@ public class DistanceVectorRoutingProtocols {
                                     try {
                                         //update send data to neighbors
                                         for (int i = 0; i < neighbors.length; i++) {
-                                           servers.get(ID).send(stringData());
+                                            send(stringData(),servers.get(neighbors[i]).getIp(),servers.get(neighbors[i]).getPort());
                                         }
 
                                     } catch (Exception e) {
+                                        e.printStackTrace();
                                         System.out.println("error ...\n make sure u spelled the file name correctly and have the correct values in files");
                                         timer.cancel();
                                     }
@@ -144,7 +145,7 @@ public class DistanceVectorRoutingProtocols {
 
                             //update send data to neighbors
                             for (int i = 0; i < neighbors.length; i++) {
-                                servers.get(ID).send(stringData());
+                                send(stringData(),servers.get(neighbors[i]).getIp(),servers.get(neighbors[i]).getPort());
                             }
 
                         }catch (Exception e){
@@ -158,7 +159,7 @@ public class DistanceVectorRoutingProtocols {
                      */
                     //update send data to neighbors
                     for (int i = 0; i < neighbors.length; i++) {
-                        servers.get(ID).send(stringData());
+                        send(stringData(),servers.get(neighbors[i]).getIp(),servers.get(neighbors[i]).getPort());
                     }
                 } else if (inputs[0].toLowerCase().contains("packets")) {
                     /**TODO packets Display the number of distance vector packets this server has received since the last
@@ -217,18 +218,12 @@ public class DistanceVectorRoutingProtocols {
         for (int i = 0; i < serverSize; i++) {
             line = scanner.nextLine();
             String[] split = line.split("\\s+");
-            DatagramSocket s = null;
+
             if((line.split("\\s+")[1]).contains(ip)){
                 ID = Integer.parseInt(line.split("\\s+")[0]);
             }
 
-
-            try {
-                s = new DatagramSocket(Integer.parseInt(split[2]), InetAddress.getByName(split[1]));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            Server server = new Server(Integer.parseInt(split[0]), s);
+            Server server = new Server(Integer.parseInt(split[0]), split[1],Integer.parseInt(split[2]));
             servers.put(server.getId(), server);
         }
 
@@ -271,23 +266,40 @@ public class DistanceVectorRoutingProtocols {
         }
     }
 
+    public static void send(String s, String ip, int port){
+
+        try {
+            DatagramPacket dp = new DatagramPacket(s.getBytes(), s.length(),InetAddress.getByName(ip),port);
+            ds.send(dp);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        ds.close();
+    }
+
+    public static String getPackageData(){
+        byte[] buf= new byte[1024];
+        DatagramPacket dp = new DatagramPacket(buf,1024);
+        try {
+            ds.receive(dp);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        String str= new String(dp.getData(),0,dp.getLength());
+        System.out.println(str);
+        return str;
+    }
+
     public static class Server{
-        private DatagramSocket ds;
         private int id;
-        public Server(DatagramSocket ds) {
-            this.ds = ds;
-        }
-        public Server(int id, DatagramSocket ds){
-            this.id=id;
-            this.ds =ds;
-        }
+        private String ip;
+        private int port;
 
-        public DatagramSocket getDs() {
-            return ds;
-        }
-
-        public void setDs(DatagramSocket ds) {
-            this.ds = ds;
+        public Server(int id, String ip, int port) {
+            this.id = id;
+            this.ip = ip;
+            this.port = port;
         }
 
         public int getId() {
@@ -298,29 +310,20 @@ public class DistanceVectorRoutingProtocols {
             this.id = id;
         }
 
-        public void send(String s){
-            DatagramPacket dp = new DatagramPacket(s.getBytes(), s.length(),ds.getInetAddress(),ds.getPort());
-            try {
-                ds.send(dp);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            ds.close();
+        public String getIp() {
+            return ip;
         }
 
-        public String getPackageData(){
-            byte[] buf= new byte[1024];
-            DatagramPacket dp = new DatagramPacket(buf,1024);
-            try {
-                ds.receive(dp);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            String str= new String(dp.getData(),0,dp.getLength());
-            System.out.println(str);
-            return str;
+        public void setIp(String ip) {
+            this.ip = ip;
         }
 
+        public int getPort() {
+            return port;
+        }
+
+        public void setPort(int port) {
+            this.port = port;
+        }
     }
 }
