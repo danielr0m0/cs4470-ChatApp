@@ -173,7 +173,7 @@ public class DistanceVectorRoutingProtocols {
                     /**TODO arg1 server ID to disable the link
                      */
                 } else if (inputs[0].toLowerCase().contains("crash")) {
-                    /**TODO “Close” all connections
+                    /**TODO all connections
                      *  set the link cost to infinity
                      */
                     ds.close();
@@ -224,7 +224,8 @@ public class DistanceVectorRoutingProtocols {
 
 
             try {
-                s = new DatagramSocket(Integer.parseInt(split[2]), InetAddress.getByName(split[1]));
+            	if(!split[1].contains(ip))
+            		s = new DatagramSocket(Integer.parseInt(split[2]), InetAddress.getByName(split[1]));
             } catch (IOException e) {
                 e.printStackTrace();
             }
