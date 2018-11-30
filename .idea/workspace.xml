@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f4e0064b-3a62-4bcc-8813-1e130eb4904c" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/src/Main/DistanceVectorRoutingProtocols.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main/DistanceVectorRoutingProtocols.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -50,7 +50,7 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Main/DistanceVectorRoutingProtocols.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="-2177">
@@ -137,6 +137,15 @@
           </provider>
         </entry>
       </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/.gitignore">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="425">
+              <caret line="25" column="7" selection-start-line="25" selection-start-column="7" selection-end-line="25" selection-end-column="7" />
+            </state>
+          </provider>
+        </entry>
+      </file>
     </leaf>
   </component>
   <component name="FileTemplateManagerImpl">
@@ -172,7 +181,6 @@
         <option value="$PROJECT_DIR$/src/Main/test.java" />
         <option value="$PROJECT_DIR$/src/Main/chats.java" />
         <option value="$PROJECT_DIR$/src/Main/Chats.java" />
-        <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/src/Main/DistantVectorRoutingProtocols.java" />
         <option value="$PROJECT_DIR$/src/Main/DSender.java" />
         <option value="$PROJECT_DIR$/src/Main/DReceiver.java" />
@@ -184,6 +192,7 @@
         <option value="$PROJECT_DIR$/src/Main/Chat.java" />
         <option value="$PROJECT_DIR$/src/Main/DijkstraAlgorithm.java" />
         <option value="$PROJECT_DIR$/src/Main/DistanceVectorRoutingProtocols.java" />
+        <option value="$PROJECT_DIR$/.gitignore" />
       </list>
     </option>
   </component>
@@ -233,7 +242,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="SearchEverywhereHistoryKey" value="&#9;FILE&#9;file://C:/Users/drdan/OneDrive/Documents/cs4470-networking/cs4470-ChatApp/src/Main/User.java" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1543562390267" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1543562845137" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="terminal" />
   </component>
@@ -330,7 +339,7 @@
     <frame x="-7" y="-7" width="1455" height="975" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" weight="0.49892473" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.49892473" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Image Layers" order="2" />
       <window_info id="Designer" order="3" />
@@ -408,13 +417,6 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/Main/Chat$1.class" />
     <entry file="file://$PROJECT_DIR$/src/Main/Chats.java" />
-    <entry file="file://$PROJECT_DIR$/.gitignore">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="16" column="5" selection-start-line="16" selection-start-column="5" selection-end-line="16" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/Main/test.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="27">
@@ -590,6 +592,13 @@
             <element signature="e#11126#11127#0" expanded="true" />
             <element signature="e#11166#11167#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.gitignore">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="425">
+          <caret line="25" column="7" selection-start-line="25" selection-start-column="7" selection-end-line="25" selection-end-column="7" />
         </state>
       </provider>
     </entry>
