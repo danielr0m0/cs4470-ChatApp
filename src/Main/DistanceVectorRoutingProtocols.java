@@ -37,19 +37,33 @@ public class DistanceVectorRoutingProtocols {
             @Override
             public void run() {
 
-                while (true){
                     try {
                         ds = new DatagramSocket(portNumber, InetAddress.getLocalHost());
                         //data received
-                        String str= getPackageData();
+                        while(true){
+                            byte[] buf= new byte[1024];
+                            DatagramPacket dp = new DatagramPacket(buf,1024);
+                            try {
+                                ds.receive(dp);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+
+                            String str= new String(dp.getData(),0,dp.getLength());
+                            System.out.println(str);
+                            parseData(str);
+                            received++;
+                        }
+
+//                        String str= getPackageData();
                         //parsed the data
-                        parseData(str);
-                        received++;
+//                        parseData(str);
+
 
                     } catch (SocketException | UnknownHostException e) {
                         e.printStackTrace();
                     }
-                }
+
             }
 
             @Override
@@ -153,7 +167,7 @@ public class DistanceVectorRoutingProtocols {
                         }
                     }
 
-                } else if (input.toLowerCase().contains("step")) {
+                } else if (inputs[0].toLowerCase().contains("step")) {
                     /**TODO step Send routing update to neighbors right away. Note that except this, routing updates only
                      * happen periodically
                      */
@@ -178,7 +192,10 @@ public class DistanceVectorRoutingProtocols {
                      *  set the link cost to infinity
                      */
                     ds.close();
-                } else {
+                } else if(input.contains("test")){
+                    send("testing","172.20.10.6",8080);
+                }
+                else {
                     System.out.println("type 'help' for assistance");
                 }
 
@@ -265,10 +282,17 @@ public class DistanceVectorRoutingProtocols {
             }
         }
     }
+    public static void print(int[] a){
+        for (int i = 0; i < a.length; i++) {
+            System.out.print(a[i]+ " ");
+        }
+        System.out.println();
+    }
 
     public static void send(String s, String ip, int port){
-
+        DatagramSocket ds=null;
         try {
+            ds = new DatagramSocket();
             DatagramPacket dp = new DatagramPacket(s.getBytes(), s.length(),InetAddress.getByName(ip),port);
             ds.send(dp);
         } catch (IOException e) {
@@ -276,19 +300,84 @@ public class DistanceVectorRoutingProtocols {
         }
         ds.close();
     }
+    public static int[] bellman_ford(int[][] graph, int source){
+        int[] d= new int[graph.length];
+        int[] p = new int[graph.length];
 
-    public static String getPackageData(){
-        byte[] buf= new byte[1024];
-        DatagramPacket dp = new DatagramPacket(buf,1024);
-        try {
-            ds.receive(dp);
-        } catch (IOException e) {
-            e.printStackTrace();
+        for (int i = 0; i < graph.length; i++) {
+            d[i]= graph[source][i];
+            p[i]=0;
         }
 
-        String str= new String(dp.getData(),0,dp.getLength());
-        System.out.println(str);
-        return str;
+        d[source]=0;
+
+        for (int i = 0; i < graph.length; i++) {
+            for (int j = 0; j < graph[i].length; j++) {
+                if(d[i]!=Integer.MAX_VALUE && graph[i][j]!=Integer.MAX_VALUE){
+                    if(d[j]> d[i] + graph[i][j])
+                        d[j]=d[i]+graph[i][j];
+                }
+
+            }
+        }
+
+        return d;
+
+    }
+
+    public static void bellman_ford(int[][] graph){
+        int[][] dv= new int[graph.length][graph.length];
+
+        for (int i = 0; i < graph.length; i++) {
+            dv[i]=bellman_ford(graph,i);
+        }
+
+        print(dv);
+
+    }
+
+    //use dictionary  i think hash map for java
+    public static int[] dijkstra(int[][] graph, int source){
+        int[] d= new int[graph.length];
+        boolean[] visited = new boolean[graph.length];
+
+        for (int i = 0; i < graph.length; i++) {
+            d[i]=Integer.MAX_VALUE;
+            visited[i]=false;
+        }
+
+        d[source]=0;
+        //find the shortest path for all vertices
+        for (int i = 0; i < graph.length - 1; i++) {
+            int min = findMinIdex(d,visited);
+            visited[min]=true;
+
+            for (int j = 0; j < graph.length; j++) {
+                if (!visited[j] && graph[min][j]!=0 && d[min] != Integer.MAX_VALUE && d[min]+graph[min][j] < d[j]){
+                    d[j]= d[min]+graph[min][j];
+                }
+            }
+
+        }
+        return d;
+    }
+
+    public static void dijkstra(int[][]graph){
+        for (int i = 0; i < graph.length; i++) {
+            print(dijkstra(graph,i));
+        }
+    }
+
+    public static int findMinIdex(int[] dist, boolean[] visited){
+        int min = Integer.MAX_VALUE;
+        int index= 0;
+        for (int i = 0; i < dist.length; i++) {
+            if(min>=dist[i] && visited[i]==false){
+                min=dist[i];
+                index=i;
+            }
+        }
+        return index;
     }
 
     public static class Server{
