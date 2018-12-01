@@ -18,7 +18,7 @@ public class DijkstraAlgorithm {
 
 
         int [][] basic = new int[][]{
-                {0,2,Integer.MAX_VALUE},
+                {0,2,7},
                 {2,0,1},
                 {7,1,0}
         };

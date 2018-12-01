@@ -24,13 +24,14 @@ public class DistanceVectorRoutingProtocols {
 
     public static void main(String[] args) throws UnknownHostException {
 //        neighbors = new int[4];
-        totalCostTable= new int[4][4];
+        totalCostTable= new int[3][3];
 
-        for (int i = 0; i < totalCostTable.length; i++) {
-            for (int j = 0; j < totalCostTable.length; j++) {
-                totalCostTable[i][j]=Integer.MAX_VALUE;
-            }
-        }
+//        for (int i = 0; i < totalCostTable.length; i++) {
+//            for (int j = 0; j < totalCostTable.length; j++) {
+//                totalCostTable[i][j]=Integer.MAX_VALUE;
+//            }
+//        }
+
         servers = new HashMap<>();
         costTable = new HashMap<>();
         ds=null;
@@ -54,6 +55,8 @@ public class DistanceVectorRoutingProtocols {
                             String str= new String(dp.getData(),0,dp.getLength());
                             parseData(str);
                             received++;
+
+                            bellman_ford(totalCostTable);
                         }
 
                     } catch (SocketException | UnknownHostException e) {
@@ -193,6 +196,9 @@ public class DistanceVectorRoutingProtocols {
                     ds.close();
                 } else if(input.contains("test")){
                     System.out.println(received);
+                    bellman_ford(totalCostTable);
+                    System.out.println("---------------------");
+                    dijkstra(totalCostTable);
                 }
                 else {
                     System.out.println("type 'help' for assistance");
@@ -251,7 +257,7 @@ public class DistanceVectorRoutingProtocols {
             int x = Integer.parseInt(links[0]);
             int y = Integer.parseInt(links[1]);
             int cost = Integer.parseInt(links[2]);
-            totalCostTable[x][y] = cost;
+            totalCostTable[x-1][y-1] = cost;
             costTable.put(y,cost);
 
             System.out.println(x+" "+ y+" "+cost);
@@ -272,7 +278,7 @@ public class DistanceVectorRoutingProtocols {
         String[] lines = s.split(";");
         for (String data : lines) {
            String[] info = data.split(" ");
-           totalCostTable[Integer.parseInt(info[0])][Integer.parseInt(info[1])]= Integer.parseInt(info[2]);
+           totalCostTable[Integer.parseInt(info[0])-1][Integer.parseInt(info[1])-1]= Integer.parseInt(info[2]);
         }
     }
 
@@ -280,7 +286,7 @@ public class DistanceVectorRoutingProtocols {
         for (int i = 0; i < a.length; i++) {
             for (int j = 0; j < a[i].length; j++) {
                 if(i!=j)
-                    System.out.println(""+i + " "+j+" " +a[i][j]);
+                    System.out.println(""+(i+1) + " "+(j+1)+" " +a[i][j]);
             }
         }
     }
@@ -331,10 +337,9 @@ public class DistanceVectorRoutingProtocols {
         int[][] dv= new int[graph.length][graph.length];
 
         for (int i = 0; i < graph.length; i++) {
-            dv[i]=bellman_ford(graph,i);
+            totalCostTable[i]=bellman_ford(graph,i);
         }
 
-        print(dv);
 
     }
 
@@ -365,9 +370,11 @@ public class DistanceVectorRoutingProtocols {
     }
 
     public static void dijkstra(int[][]graph){
+        int [][] dv = new int[graph.length][graph.length];
         for (int i = 0; i < graph.length; i++) {
-            print(dijkstra(graph,i));
+            dv[i]= dijkstra(graph,i);
         }
+        print(dv);
     }
 
     public static int findMinIdex(int[] dist, boolean[] visited){
