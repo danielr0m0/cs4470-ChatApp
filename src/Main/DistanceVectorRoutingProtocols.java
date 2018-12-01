@@ -372,9 +372,9 @@ public class DistanceVectorRoutingProtocols {
     public static void dijkstra(int[][]graph){
         int [][] dv = new int[graph.length][graph.length];
         for (int i = 0; i < graph.length; i++) {
-            dv[i]= dijkstra(graph,i);
+            totalCostTable[i]= dijkstra(graph,i);
         }
-        print(dv);
+//        print(dv);
     }
 
     public static int findMinIdex(int[] dist, boolean[] visited){
