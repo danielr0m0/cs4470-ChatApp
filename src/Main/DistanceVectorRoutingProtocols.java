@@ -188,7 +188,7 @@ public class DistanceVectorRoutingProtocols {
                     /**TODO arg1 server ID to disable the link
                      */
                 } else if (inputs[0].toLowerCase().contains("crash")) {
-                    /**TODO “Close” all connections
+                    /**TODO all connections
                      *  set the link cost to infinity
                      */
                     ds.close();
@@ -240,7 +240,9 @@ public class DistanceVectorRoutingProtocols {
                 ID = Integer.parseInt(line.split("\\s+")[0]);
             }
 
+
             Server server = new Server(Integer.parseInt(split[0]), split[1],Integer.parseInt(split[2]));
+
             servers.put(server.getId(), server);
         }
 
