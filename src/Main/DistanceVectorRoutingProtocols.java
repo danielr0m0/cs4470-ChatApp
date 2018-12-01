@@ -102,15 +102,24 @@ public class DistanceVectorRoutingProtocols {
 
                             readFile(topology);
 
-                            System.out.println(stringData());
                             Timer timer = new Timer();
                             timer.schedule(new TimerTask() {
                                 @Override
                                 public void run() {
                                     try {
                                         //update send data to neighbors
+                                        String s = stringData();
                                         for (int i = 0; i < neighbors.length; i++) {
-                                            send(stringData(),servers.get(neighbors[i]).getIp(),servers.get(neighbors[i]).getPort());
+                                            DatagramSocket ds=null;
+                                            try {
+                                                ds = new DatagramSocket();
+                                                DatagramPacket dp = new DatagramPacket(s.getBytes(), s.length(),InetAddress.getByName(servers.get(neighbors[i]).getIp()),servers.get(neighbors[i]).getPort());
+                                                ds.send(dp);
+                                            } catch (IOException e) {
+                                                e.printStackTrace();
+                                            }
+                                            ds.close();
+//                                            send(stringData(),servers.get(neighbors[i]).getIp(),servers.get(neighbors[i]).getPort());
                                         }
 
                                     } catch (Exception e) {
