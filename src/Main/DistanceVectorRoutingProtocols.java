@@ -43,11 +43,7 @@ public class DistanceVectorRoutingProtocols {
                         while(true){
                             byte[] buf= new byte[1024];
                             DatagramPacket dp = new DatagramPacket(buf,1024);
-                            try {
-                                ds.receive(dp);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
+                            ds.receive(dp);
 
                             String str= new String(dp.getData(),0,dp.getLength());
                             System.out.println(str);
@@ -55,12 +51,9 @@ public class DistanceVectorRoutingProtocols {
                             received++;
                         }
 
-//                        String str= getPackageData();
-                        //parsed the data
-//                        parseData(str);
-
-
                     } catch (SocketException | UnknownHostException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
                         e.printStackTrace();
                     }
 
