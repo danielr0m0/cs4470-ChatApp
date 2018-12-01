@@ -102,6 +102,7 @@ public class DistanceVectorRoutingProtocols {
 
                             readFile(topology);
 
+                            System.out.println(stringData());
                             Timer timer = new Timer();
                             timer.schedule(new TimerTask() {
                                 @Override
@@ -109,7 +110,17 @@ public class DistanceVectorRoutingProtocols {
                                     try {
                                         //update send data to neighbors
                                         for (int i = 0; i < neighbors.length; i++) {
-                                            send(stringData(),servers.get(neighbors[i]).getIp(),servers.get(neighbors[i]).getPort());
+                                            String s= stringData();
+
+                                            DatagramSocket ds=null;
+                                            try {
+                                                ds = new DatagramSocket();
+                                                DatagramPacket dp = new DatagramPacket(s.getBytes(), s.length(),InetAddress.getByName(servers.get(neighbors[i]).getIp()),servers.get(neighbors[i]).getPort());
+                                                ds.send(dp);
+                                            } catch (IOException e) {
+                                                e.printStackTrace();
+                                            }
+                                            ds.close();
                                         }
 
                                     } catch (Exception e) {
@@ -118,7 +129,7 @@ public class DistanceVectorRoutingProtocols {
                                         timer.cancel();
                                     }
                                 }
-                            }, 0, interval);
+                            }, interval, interval);
 
                         } else {
                             System.out.println("file doesnt exists");
@@ -186,7 +197,8 @@ public class DistanceVectorRoutingProtocols {
                      */
                     ds.close();
                 } else if(input.contains("test")){
-                    send("testing","172.20.10.6",8080);
+                    readFile(new File("topology.txt"));
+                    System.out.println(stringData());
                 }
                 else {
                     System.out.println("type 'help' for assistance");
@@ -241,15 +253,17 @@ public class DistanceVectorRoutingProtocols {
 
         for (int i = 0; i < numOfEdges; i++) {
             line = scanner.nextLine();
-
             String[] links = line.split("\\s+");
-            int x = Integer.parseInt(links[0]) - 1;
-            int y = Integer.parseInt(links[1]) - 1;
+            int x = Integer.parseInt(links[0]);
+            int y = Integer.parseInt(links[1]);
             int cost = Integer.parseInt(links[2]);
             neighbors[i]=y;
             totalCostTable[x][y] = cost;
             costTable.put(y,cost);
+
+            System.out.println(x+" "+ y+" "+cost);
         }
+
     }
 
     //end line with;
@@ -258,7 +272,7 @@ public class DistanceVectorRoutingProtocols {
         for(Integer id : costTable.keySet()){
             results+=ID+" "+id+" "+costTable.get(id)+";";
         }
-        return "";
+        return results;
     }
 
     public static void parseData(String s){
