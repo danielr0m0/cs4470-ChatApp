@@ -50,7 +50,13 @@ public class DistanceVectorRoutingProtocols {
                         while(true){
                             byte[] buf= new byte[1024];
                             DatagramPacket dp = new DatagramPacket(buf,1024);
-                            ds.receive(dp);
+                            try{
+                                ds.receive(dp);
+                            }catch (Exception e){
+                                System.out.println("you just crash the system!");
+                                System.exit(-1);
+                            }
+
 
                             String str= new String(dp.getData(),0,dp.getLength());
                             parseData(str);
@@ -154,7 +160,7 @@ public class DistanceVectorRoutingProtocols {
                             if(cost == -1){
                                 cost = Integer.MAX_VALUE;
                             }
-                            totalCostTable[id1][id2]= cost;
+                            totalCostTable[id1-1][id2-1]= cost;
                             if(id1== ID){
                                 costTable.replace(id2,cost);
                             }
@@ -165,6 +171,7 @@ public class DistanceVectorRoutingProtocols {
                             }
 
                         }catch (Exception e){
+                            e.printStackTrace();
                             System.out.println("error please enter correct values enter -1 for infinity");
                         }
                     }
@@ -194,6 +201,9 @@ public class DistanceVectorRoutingProtocols {
                      *  set the link cost to infinity
                      */
                     ds.close();
+                    servers.clear();
+
+
                 } else if(input.contains("test")){
                     System.out.println(received);
                     bellman_ford(totalCostTable);
@@ -279,6 +289,7 @@ public class DistanceVectorRoutingProtocols {
         for (String data : lines) {
            String[] info = data.split(" ");
            totalCostTable[Integer.parseInt(info[0])-1][Integer.parseInt(info[1])-1]= Integer.parseInt(info[2]);
+           totalCostTable[Integer.parseInt(info[1])-1][Integer.parseInt(info[0])-1]= Integer.parseInt(info[2]);
         }
     }
 
