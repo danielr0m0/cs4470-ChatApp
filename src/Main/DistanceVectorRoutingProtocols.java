@@ -110,17 +110,7 @@ public class DistanceVectorRoutingProtocols {
                                     try {
                                         //update send data to neighbors
                                         for (int i = 0; i < neighbors.length; i++) {
-                                            String s= stringData();
-
-                                            DatagramSocket ds=null;
-                                            try {
-                                                ds = new DatagramSocket();
-                                                DatagramPacket dp = new DatagramPacket(s.getBytes(), s.length(),InetAddress.getByName(servers.get(neighbors[i]).getIp()),servers.get(neighbors[i]).getPort());
-                                                ds.send(dp);
-                                            } catch (IOException e) {
-                                                e.printStackTrace();
-                                            }
-                                            ds.close();
+                                            send(stringData(),servers.get(neighbors[i]).getIp(),servers.get(neighbors[i]).getPort());
                                         }
 
                                     } catch (Exception e) {
