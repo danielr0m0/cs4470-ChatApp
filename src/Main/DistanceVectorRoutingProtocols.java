@@ -25,6 +25,12 @@ public class DistanceVectorRoutingProtocols {
     public static void main(String[] args) throws UnknownHostException {
 //        neighbors = new int[4];
         totalCostTable= new int[4][4];
+
+        for (int i = 0; i < totalCostTable.length; i++) {
+            for (int j = 0; j < totalCostTable.length; j++) {
+                totalCostTable[i][j]=Integer.MAX_VALUE;
+            }
+        }
         servers = new HashMap<>();
         costTable = new HashMap<>();
         ds=null;
@@ -108,6 +114,7 @@ public class DistanceVectorRoutingProtocols {
                                     try {
                                         //update send data to neighbors
                                         for (int id : servers.keySet()) {
+
                                             send(stringData(),servers.get(id).getIp(),servers.get(id).getPort());
                                         }
 
@@ -185,8 +192,7 @@ public class DistanceVectorRoutingProtocols {
                      */
                     ds.close();
                 } else if(input.contains("test")){
-                    readFile(new File("topology.txt"));
-                    System.out.println(stringData());
+                    System.out.println(received);
                 }
                 else {
                     System.out.println("type 'help' for assistance");
@@ -266,7 +272,7 @@ public class DistanceVectorRoutingProtocols {
         String[] lines = s.split(";");
         for (String data : lines) {
            String[] info = data.split(" ");
-           totalCostTable[Integer.parseInt(info[0])][Integer.parseInt(info[1])]= Integer.parseInt(info[0]);
+           totalCostTable[Integer.parseInt(info[0])][Integer.parseInt(info[1])]= Integer.parseInt(info[2]);
         }
     }
 
