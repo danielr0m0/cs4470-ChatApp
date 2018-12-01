@@ -10,7 +10,7 @@ import java.util.*;
 public class DistanceVectorRoutingProtocols {
 
     public static HashMap<Integer,Server> servers;
-    public static int[] neighbors;
+//    public static int[] neighbors;
     public static int ID =0;
     public static int received=0;
     public static int[][] totalCostTable;
@@ -23,7 +23,7 @@ public class DistanceVectorRoutingProtocols {
     private static Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) throws UnknownHostException {
-        neighbors = new int[4];
+//        neighbors = new int[4];
         totalCostTable= new int[4][4];
         servers = new HashMap<>();
         costTable = new HashMap<>();
@@ -46,7 +46,6 @@ public class DistanceVectorRoutingProtocols {
                             ds.receive(dp);
 
                             String str= new String(dp.getData(),0,dp.getLength());
-                            System.out.println(str);
                             parseData(str);
                             received++;
                         }
@@ -108,18 +107,8 @@ public class DistanceVectorRoutingProtocols {
                                 public void run() {
                                     try {
                                         //update send data to neighbors
-                                        String s = stringData();
-                                        for (int i = 0; i < neighbors.length; i++) {
-                                            DatagramSocket ds=null;
-                                            try {
-                                                ds = new DatagramSocket();
-                                                DatagramPacket dp = new DatagramPacket(s.getBytes(), s.length(),InetAddress.getByName(servers.get(neighbors[i]).getIp()),servers.get(neighbors[i]).getPort());
-                                                ds.send(dp);
-                                            } catch (IOException e) {
-                                                e.printStackTrace();
-                                            }
-                                            ds.close();
-//                                            send(stringData(),servers.get(neighbors[i]).getIp(),servers.get(neighbors[i]).getPort());
+                                        for (int id : servers.keySet()) {
+                                            send(stringData(),servers.get(id).getIp(),servers.get(id).getPort());
                                         }
 
                                     } catch (Exception e) {
@@ -161,8 +150,8 @@ public class DistanceVectorRoutingProtocols {
                             }
 
                             //update send data to neighbors
-                            for (int i = 0; i < neighbors.length; i++) {
-                                send(stringData(),servers.get(neighbors[i]).getIp(),servers.get(neighbors[i]).getPort());
+                            for (int id : servers.keySet()) {
+                                send(stringData(),servers.get(id).getIp(),servers.get(id).getPort());
                             }
 
                         }catch (Exception e){
@@ -175,8 +164,8 @@ public class DistanceVectorRoutingProtocols {
                      * happen periodically
                      */
                     //update send data to neighbors
-                    for (int i = 0; i < neighbors.length; i++) {
-                        send(stringData(),servers.get(neighbors[i]).getIp(),servers.get(neighbors[i]).getPort());
+                    for (int id : servers.keySet()) {
+                        send(stringData(),servers.get(id).getIp(),servers.get(id).getPort());
                     }
                 } else if (inputs[0].toLowerCase().contains("packets")) {
                     /**TODO packets Display the number of distance vector packets this server has received since the last
@@ -256,7 +245,6 @@ public class DistanceVectorRoutingProtocols {
             int x = Integer.parseInt(links[0]);
             int y = Integer.parseInt(links[1]);
             int cost = Integer.parseInt(links[2]);
-            neighbors[i]=y;
             totalCostTable[x][y] = cost;
             costTable.put(y,cost);
 
